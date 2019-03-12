@@ -258,39 +258,55 @@ class _ServicePageState extends State<ServicePage> {
   @override
   Widget build(BuildContext context) {
     var avatar = CachedNetworkImage(
+        width: 70,
+        height: 70,
         imageUrl: "https://logo.clearbit.com/${serviceName.toLowerCase()}.com",
         placeholder: (context, url) => CircularProgressIndicator(),
         errorWidget: (context, url, error) => new Icon(Icons.error_outline));
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 1,
+        elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(serviceName),
       ),
-      body: Container(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    FittedBox(
-                      child: CircleAvatar(
+      body: Stack(
+        children: [
+          ClipPath(
+            clipper: BackgroundClipper(),
+            child: Container(color: Colors.blue),
+          ),
+          Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(50.0),
                         child: avatar,
                       ),
-                    ),
-                    Text(serviceURL),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(serviceURL.toLowerCase()),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Expanded(flex: 4, child: Container()),
-            ],
+                Expanded(
+                  flex: 4,
+                  child: Container(
+                    color: Colors.transparent,
+                    width: MediaQuery.of(context).size.width,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
       endDrawer: Drawer(),
       floatingActionButton: FloatingActionButton(
@@ -301,4 +317,19 @@ class _ServicePageState extends State<ServicePage> {
       ),
     );
   }
+}
+
+class BackgroundClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.lineTo(0, size.height / 2);
+    path.lineTo(size.width, size.height / 3);
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper oldDelegate) => false;
 }
