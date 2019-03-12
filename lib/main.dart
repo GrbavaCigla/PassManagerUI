@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/rendering.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  // debugPaintSizeEnabled = true;
+
   runApp(App());
 }
 
@@ -194,7 +197,15 @@ class CustomListTile extends StatelessWidget {
     if (serviceName != "") {
       return Container(
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ServicePage(
+                    serviceName, "https://www.${serviceName}.com", "password"),
+              ),
+            );
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(
@@ -229,19 +240,63 @@ class CustomListTile extends StatelessWidget {
 }
 
 class ServicePage extends StatefulWidget {
+  String serviceName;
+  String serviceURL;
+  String password;
+  ServicePage(this.serviceName, this.serviceURL, this.password);
   @override
-  _ServicePageState createState() => _ServicePageState();
+  _ServicePageState createState() =>
+      _ServicePageState(this.serviceName, this.serviceURL, this.password);
 }
 
 class _ServicePageState extends State<ServicePage> {
+  String serviceName;
+  String serviceURL;
+  String password;
+
+  _ServicePageState(this.serviceName, this.serviceURL, this.password);
   @override
   Widget build(BuildContext context) {
+    var avatar = CachedNetworkImage(
+        imageUrl: "https://logo.clearbit.com/${serviceName.toLowerCase()}.com",
+        placeholder: (context, url) => CircularProgressIndicator(),
+        errorWidget: (context, url, error) => new Icon(Icons.error_outline));
     return Scaffold(
-      appBar: AppBar(),
-      body: Container(),
+      appBar: AppBar(
+        elevation: 1,
+        automaticallyImplyLeading: false,
+        title: Text(serviceName),
+      ),
+      body: Container(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                flex: 1,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    FittedBox(
+                      child: CircleAvatar(
+                        child: avatar,
+                      ),
+                    ),
+                    Text(serviceURL),
+                  ],
+                ),
+              ),
+              Expanded(flex: 4, child: Container()),
+            ],
+          ),
+        ),
+      ),
       endDrawer: Drawer(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pop(context);
+        },
         child: Icon(Icons.arrow_back),
       ),
     );
