@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:swipedetector/swipedetector.dart';
 import 'package:flutter/rendering.dart';
 
 void main() {
@@ -263,57 +264,69 @@ class _ServicePageState extends State<ServicePage> {
         imageUrl: "https://logo.clearbit.com/${serviceName.toLowerCase()}.com",
         placeholder: (context, url) => CircularProgressIndicator(),
         errorWidget: (context, url, error) => new Icon(Icons.error_outline));
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: Text(serviceName),
-      ),
-      body: Stack(
-        children: [
-          ClipPath(
-            clipper: BackgroundClipper(),
-            child: Container(color: Colors.blue),
-          ),
-          Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(50.0),
-                        child: avatar,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(serviceURL.toLowerCase()),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 4,
-                  child: Container(
-                    color: Colors.transparent,
-                    width: MediaQuery.of(context).size.width,
-                  ),
-                ),
-              ],
+    return SwipeDetector(
+      onSwipeDown: () {
+        Navigator.pop(context);
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          title: Text(serviceName),
+        ),
+        body: Stack(
+          children: [
+            ClipPath(
+              clipper: BackgroundClipper(),
+              child: Container(color: Colors.blue),
             ),
-          ),
-        ],
-      ),
-      endDrawer: Drawer(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        child: Icon(Icons.arrow_back),
+            Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        CircleAvatar(
+                          radius: 25,
+                          backgroundColor: Colors.white,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(50.0),
+                            child: avatar,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Text(
+                            serviceURL.toLowerCase(),
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 4,
+                    child: Container(
+                      color: Colors.transparent,
+                      width: MediaQuery.of(context).size.width,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        // endDrawer: Drawer(),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        //   child: Icon(Icons.arrow_back),
+        // ),
       ),
     );
   }
@@ -332,4 +345,16 @@ class BackgroundClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper oldDelegate) => false;
+}
+
+class CreateService extends StatefulWidget {
+  @override
+  _CreateServiceState createState() => _CreateServiceState();
+}
+
+class _CreateServiceState extends State<CreateService> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold();
+  }
 }
