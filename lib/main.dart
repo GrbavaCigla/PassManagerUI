@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  // debugPaintSizeEnabled = true;
+  debugPaintSizeEnabled = true;
 
   runApp(App());
 }
@@ -31,6 +31,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   GlobalKey<ScaffoldState> key = GlobalKey();
   var _services = [
+    "SteamPowered",
+    "Github",
     "Facebook",
     "Instagram",
     "Viber",
@@ -39,7 +41,6 @@ class _HomePageState extends State<HomePage> {
     "Apple",
     "Microsoft",
     "IBM",
-    "Google+",
     "Twitter",
     "WhatsApp",
     "Pinterest",
@@ -59,14 +60,14 @@ class _HomePageState extends State<HomePage> {
               child: ListView(
                 children: <Widget>[
                   UserAccountsDrawerHeader(
-                    accountEmail: Text("Generic Name"),
+                    accountEmail: Text("Name"),
                     accountName: Text("Generic Name"),
                   ),
                   ListTile(
-                    title: Text("Logout"),
+                    title: Text("Log out"),
                     onTap: () {
+                      Navigator.pop(context, true);
                       Navigator.pop(context);
-                      print("Hi");
                     },
                   ),
                 ],
@@ -118,6 +119,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
+    final String password = "123";
+    String passwordToCheck = "";
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return Scaffold(
       body: Container(
         child: Column(
@@ -138,13 +142,32 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: <Widget>[
-                    TextField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.vpn_key),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    Form(
+                      key: formKey,
+                      child: TextFormField(
+                        autovalidate: false,
+                        validator: (String arg) {
+                          if (password == passwordToCheck) {
+                            print("True");
+                            return null;
+                          } else {
+                            print("False");
+                            return "Password is incorrect!";
+                          }
+                        },
+                        onSaved: (String val) {
+                          passwordToCheck = val;
+                        },
+                        autocorrect: false,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          fillColor: Colors.red,
+                          prefixIcon: Icon(Icons.vpn_key),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          labelText: "Master Key",
                         ),
-                        labelText: "Master Key",
                       ),
                     ),
                   ],
@@ -162,12 +185,19 @@ class _LoginPageState extends State<LoginPage> {
                 elevation: 1,
                 child: Text("Log in"),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomePage(),
-                    ),
-                  );
+                  // print(formKey.currentState.validate());
+                  formKey.currentState.save();
+                  if (password == passwordToCheck) {
+                    formKey.currentState.reset();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(),
+                      ),
+                    );
+                  } else {
+                    print("false");
+                  }
                 },
               ),
             ),
@@ -265,6 +295,8 @@ class _ServicePageState extends State<ServicePage> {
         placeholder: (context, url) => CircularProgressIndicator(),
         errorWidget: (context, url, error) => new Icon(Icons.error_outline));
     return SwipeDetector(
+      swipeConfiguration:
+          SwipeConfiguration(verticalSwipeMaxWidthThreshold: 250),
       onSwipeDown: () {
         Navigator.pop(context);
       },
@@ -345,16 +377,4 @@ class BackgroundClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper oldDelegate) => false;
-}
-
-class CreateService extends StatefulWidget {
-  @override
-  _CreateServiceState createState() => _CreateServiceState();
-}
-
-class _CreateServiceState extends State<CreateService> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold();
-  }
 }
